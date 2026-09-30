@@ -82,51 +82,57 @@ function Onboarding() {
 
   return (
     <main>
-      <h1>Tell us about you</h1>
-      <form onSubmit={onSubmit}>
-        <label>
-          First name
-          <input
-            required
-            maxLength={100}
-            autoComplete="given-name"
-            value={firstName}
-            onChange={(event) => setFirstName(event.target.value)}
-          />
-        </label>
-        <label>
-          Last name
-          <input
-            required
-            maxLength={100}
-            autoComplete="family-name"
-            value={lastName}
-            onChange={(event) => setLastName(event.target.value)}
-          />
-        </label>
-        <fieldset style={{ marginTop: '0.75rem' }}>
-          <legend>I am a</legend>
-          {ROLES.map((value) => (
-            <label key={value} style={{ display: 'inline', marginRight: '1rem' }}>
+      <div className="card">
+        <h1>Tell us about you</h1>
+        <p className="muted">One step and you are in.</p>
+        <form onSubmit={onSubmit}>
+          <div className="row">
+            <label>
+              First name
               <input
-                type="radio"
-                name="role"
                 required
-                value={value}
-                checked={role === value}
-                onChange={() => setRole(value)}
-                style={{ display: 'inline', width: 'auto' }}
-              />{' '}
-              {ROLE_LABELS[value]}
+                maxLength={100}
+                autoComplete="given-name"
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+              />
             </label>
-          ))}
-          <p>This cannot be changed later.</p>
-        </fieldset>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={pending}>
-          {pending ? 'Saving…' : 'Continue'}
-        </button>
-      </form>
+            <label>
+              Last name
+              <input
+                required
+                maxLength={100}
+                autoComplete="family-name"
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
+              />
+            </label>
+          </div>
+          <fieldset>
+            <legend>I am a</legend>
+            <div className="role-options">
+              {ROLES.map((value) => (
+                <label key={value} className="role-option">
+                  <input
+                    type="radio"
+                    name="role"
+                    required
+                    value={value}
+                    checked={role === value}
+                    onChange={() => setRole(value)}
+                  />
+                  {ROLE_LABELS[value]}
+                </label>
+              ))}
+            </div>
+            <p className="hint">This cannot be changed later.</p>
+          </fieldset>
+          {error && <p role="alert">{error}</p>}
+          <button type="submit" disabled={pending}>
+            {pending ? 'Saving…' : 'Continue'}
+          </button>
+        </form>
+      </div>
     </main>
   )
 }

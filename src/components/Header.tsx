@@ -11,24 +11,31 @@ export function Header() {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
 
   return (
-    <header style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
-      <Link to="/">
-        <strong>HAUZ</strong>
-      </Link>
-      <span style={{ flex: 1 }} />
-      {session ? (
-        <>
-          <Link to="/profile">{session.account?.firstName ?? session.email}</Link>
-          <LogOutButton />
-        </>
-      ) : (
-        <Link
-          to="/sign-in"
-          search={pathname === '/' || pathname === '/sign-in' ? {} : { redirect: pathname }}
-        >
-          Sign in
+    <header className="site-header">
+      <div className="site-header__inner">
+        <Link to="/" className="brand">
+          HA<span>U</span>Z
         </Link>
-      )}
+        <span className="spacer" />
+        {session ? (
+          <>
+            <Link to="/profile" className="user-chip">
+              <span className="avatar" aria-hidden>
+                {(session.account?.firstName ?? session.email).charAt(0).toUpperCase()}
+              </span>
+              {session.account?.firstName ?? session.email}
+            </Link>
+            <LogOutButton />
+          </>
+        ) : (
+          <Link
+            to="/sign-in"
+            search={pathname === '/' || pathname === '/sign-in' ? {} : { redirect: pathname }}
+          >
+            Sign in
+          </Link>
+        )}
+      </div>
     </header>
   )
 }
@@ -48,7 +55,12 @@ function LogOutButton() {
   })
 
   return (
-    <button type="button" onClick={() => logOut.mutate()} disabled={logOut.isPending}>
+    <button
+      type="button"
+      className="btn-secondary"
+      onClick={() => logOut.mutate()}
+      disabled={logOut.isPending}
+    >
       {logOut.isPending ? 'Logging out…' : 'Log out'}
     </button>
   )

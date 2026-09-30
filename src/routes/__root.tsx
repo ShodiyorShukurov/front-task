@@ -66,11 +66,13 @@ function RootError() {
   const router = useRouter()
   return (
     <main>
-      <h1>Something went wrong</h1>
-      <p>We could not reach our servers. Your sign-in is kept.</p>
-      <button type="button" onClick={() => router.invalidate()}>
-        Try again
-      </button>
+      <div className="card">
+        <h1>Something went wrong</h1>
+        <p className="muted">We could not reach our servers. Your sign-in is kept.</p>
+        <button type="button" onClick={() => router.invalidate()}>
+          Try again
+        </button>
+      </div>
     </main>
   )
 }

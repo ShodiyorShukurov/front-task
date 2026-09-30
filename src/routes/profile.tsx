@@ -34,13 +34,15 @@ function ProfileForm({ account }: { account: PersonalAccount }) {
   const [lastName, setLastName] = useState(account.lastName)
   const [contactEmail, setContactEmail] = useState(account.contactEmail ?? '')
   const [bio, setBio] = useState(account.bio ?? '')
-  const [status, setStatus] = useState<string | null>(null)
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setPending(true)
-    setStatus(null)
+    setSaved(false)
+    setError(null)
 
     try {
       // No user id: the server knows who is signed in from the session cookie.
@@ -56,7 +58,7 @@ function ProfileForm({ account }: { account: PersonalAccount }) {
         setLastName(result.account.lastName)
         setContactEmail(result.account.contactEmail ?? '')
         setBio(result.account.bio ?? '')
-        setStatus('Saved.')
+        setSaved(true)
         return
       }
 
@@ -66,13 +68,13 @@ function ProfileForm({ account }: { account: PersonalAccount }) {
         return
       }
 
-      setStatus(
+      setError(
         result.failure.issues?.map((issue) => `${issue.field}: ${issue.message}`).join(' ') ??
           result.failure.message,
       )
     } catch (error) {
       console.error(error)
-      setStatus('Could not save. Check the fields and try again.')
+      setError('Could not save. Check the fields and try again.')
     } finally {
       setPending(false)
     }
@@ -80,50 +82,70 @@ function ProfileForm({ account }: { account: PersonalAccount }) {
 
   return (
     <main>
-      <h1>Your profile</h1>
-      <p>Role: {ROLE_LABELS[account.role]}</p>
-      <form onSubmit={onSubmit}>
-        <label>
-          First name
-          <input
-            required
-            maxLength={100}
-            value={firstName}
-            onChange={(event) => setFirstName(event.target.value)}
-          />
-        </label>
-        <label>
-          Last name
-          <input
-            required
-            maxLength={100}
-            value={lastName}
-            onChange={(event) => setLastName(event.target.value)}
-          />
-        </label>
-        <label>
-          Contact email (optional)
-          <input
-            type="email"
-            maxLength={254}
-            value={contactEmail}
-            onChange={(event) => setContactEmail(event.target.value)}
-          />
-        </label>
-        <label>
-          Bio (optional)
-          <textarea
-            rows={5}
-            maxLength={2000}
-            value={bio}
-            onChange={(event) => setBio(event.target.value)}
-          />
-        </label>
-        {status && <p role="status">{status}</p>}
-        <button type="submit" disabled={pending}>
-          {pending ? 'Saving…' : 'Save'}
-        </button>
-      </form>
+      <div className="card card--wide">
+        <div className="profile-head">
+          <span className="avatar" aria-hidden>
+            {account.firstName.charAt(0).toUpperCase()}
+          </span>
+          <div>
+            <h1>
+              {account.firstName} {account.lastName}
+            </h1>
+            <span className="badge">{ROLE_LABELS[account.role]}</span>
+          </div>
+        </div>
+        <form onSubmit={onSubmit}>
+          <div className="row">
+            <label>
+              First name
+              <input
+                required
+                maxLength={100}
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+              />
+            </label>
+            <label>
+              Last name
+              <input
+                required
+                maxLength={100}
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
+              />
+            </label>
+          </div>
+          <label>
+            <span>
+              Contact email <span className="optional">(optional)</span>
+            </span>
+            <input
+              type="email"
+              maxLength={254}
+              placeholder="Shown to people who contact you"
+              value={contactEmail}
+              onChange={(event) => setContactEmail(event.target.value)}
+            />
+          </label>
+          <label>
+            <span>
+              Bio <span className="optional">(optional)</span>
+            </span>
+            <textarea
+              rows={5}
+              maxLength={2000}
+              placeholder="A few words about you"
+              value={bio}
+              onChange={(event) => setBio(event.target.value)}
+            />
+          </label>
+          {error && <p role="alert">{error}</p>}
+          {saved && <p role="status">Saved.</p>}
+          <button type="submit" disabled={pending}>
+            {pending ? 'Saving…' : 'Save changes'}
+          </button>
+        </form>
+      </div>
     </main>
   )
 }

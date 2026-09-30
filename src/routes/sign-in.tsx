@@ -73,58 +73,76 @@ function SignIn() {
   if (step === 'email') {
     return (
       <main>
-        <h1>Sign in</h1>
-        <form onSubmit={onSendCode}>
-          <label>
-            Email
-            <input
-              type="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </label>
-          {error && <p role="alert">{error}</p>}
-          <button type="submit" disabled={pending}>
-            {pending ? 'Sending…' : 'Send code'}
-          </button>
-        </form>
+        <div className="card">
+          <h1>Sign in to HAUZ</h1>
+          <p className="muted">
+            Enter your email and we will send you a code. No password needed.
+          </p>
+          <form onSubmit={onSendCode}>
+            <label>
+              Email
+              <input
+                type="email"
+                required
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+            </label>
+            {error && <p role="alert">{error}</p>}
+            <button type="submit" disabled={pending}>
+              {pending ? 'Sending…' : 'Send code'}
+            </button>
+          </form>
+        </div>
       </main>
     )
   }
 
   return (
     <main>
-      <h1>Check your email</h1>
-      <p>We sent a 6 digit code to {email}. It may take a minute, and may land in spam.</p>
-      <form onSubmit={onVerify}>
-        <label>
-          Code
-          <input
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            pattern="\d{6}"
-            maxLength={6}
-            required
-            autoFocus
-            value={code}
-            onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
-          />
-        </label>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={pending}>
-          {pending ? 'Checking…' : 'Sign in'}
-        </button>
-      </form>
-      <p>
-        <button type="button" onClick={() => setStep('email')} disabled={pending}>
-          Use a different email
-        </button>{' '}
-        <button type="button" onClick={onSendCode} disabled={pending}>
-          Send a new code
-        </button>
-      </p>
+      <div className="card">
+        <h1>Check your email</h1>
+        <p className="muted">
+          We sent a 6 digit code to <strong>{email}</strong>. It may take a minute, and may land
+          in spam.
+        </p>
+        <form onSubmit={onVerify}>
+          <label>
+            Code
+            <input
+              className="code-input"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              pattern="\d{6}"
+              maxLength={6}
+              required
+              autoFocus
+              placeholder="000000"
+              value={code}
+              onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
+            />
+          </label>
+          {error && <p role="alert">{error}</p>}
+          <button type="submit" disabled={pending}>
+            {pending ? 'Checking…' : 'Sign in'}
+          </button>
+        </form>
+        <div className="actions">
+          <button
+            type="button"
+            className="btn-link"
+            onClick={() => setStep('email')}
+            disabled={pending}
+          >
+            Use a different email
+          </button>
+          <button type="button" className="btn-link" onClick={onSendCode} disabled={pending}>
+            Send a new code
+          </button>
+        </div>
+      </div>
     </main>
   )
 }
