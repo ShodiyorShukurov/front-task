@@ -1,7 +1,46 @@
-# HAUZ frontend take-home starter
+# HAUZ frontend take-home
 
-A blank TanStack Start app plus the Appwrite Function you will call from it.
-Read `TASK.md` for what to build. This file is only about getting it running.
+Email-code sign-in, onboarding, `/profile`, a server-rendered header and log
+out, built on TanStack Start and Appwrite. `TASK.md` is the brief, `NOTES.md`
+explains the decisions.
+
+## Quick start
+
+Steps 1–5 below, in short:
+
+```bash
+npm install
+# put your Project ID into appwrite.config.json
+npx appwrite login
+npm run appwrite:push
+cp .env.example .env   # fill in endpoint, project id, API key
+npm run dev            # http://localhost:3000
+```
+
+Two things that cost me time:
+
+- **Start the dev server after `.env` exists.** The env file is read once at
+  startup. A server started earlier fails every Appwrite call ("Something
+  went wrong" on sign-in). Restart it.
+- **Run only one dev server per checkout.** Two of them rewrite
+  `src/routeTree.gen.ts` in turn and reload each other forever.
+
+## Where things are
+
+```
+src/server/appwrite.server.ts          Appwrite clients, cookie names; server only
+src/server/personal-account.server.ts  calls the Function as the signed-in user
+src/server/auth.ts                     getSession, sendCode, verifyCode, signOut
+src/server/profile.ts                  createAccount, updateAccount
+src/start.ts                           CSRF check on server function calls
+src/lib/redirect.ts                    safeRedirect for the ?redirect= param
+src/routes/                            sign-in, onboarding, profile, index, root
+src/components/Header.tsx              header and log out
+```
+
+The original setup notes follow.
+
+---
 
 ## What you need
 
