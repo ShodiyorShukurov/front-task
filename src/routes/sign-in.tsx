@@ -40,7 +40,8 @@ function SignIn() {
     setError(null)
     try {
       await action()
-    } catch {
+    } catch (error) {
+      console.error(error)
       setError('Something went wrong. Please try again.')
     } finally {
       setPending(false)

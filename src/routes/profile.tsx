@@ -70,7 +70,8 @@ function ProfileForm({ account }: { account: PersonalAccount }) {
         result.failure.issues?.map((issue) => `${issue.field}: ${issue.message}`).join(' ') ??
           result.failure.message,
       )
-    } catch {
+    } catch (error) {
+      console.error(error)
       setStatus('Could not save. Check the fields and try again.')
     } finally {
       setPending(false)

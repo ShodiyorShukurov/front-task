@@ -71,7 +71,8 @@ function Onboarding() {
           : (result.failure.issues?.map((issue) => issue.message).join(' ') ??
               result.failure.message),
       )
-    } catch {
+    } catch (error) {
+      console.error(error)
       setError('Something went wrong. Please try again.')
     } finally {
       submitting.current = false
