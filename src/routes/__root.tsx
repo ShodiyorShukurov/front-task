@@ -1,10 +1,14 @@
 import type { QueryClient } from '@tanstack/react-query'
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
+  useRouter,
 } from '@tanstack/react-router'
 
+import { Header } from '#/components/Header'
+import { sessionQuery } from '#/lib/session'
 import appCss from '../styles.css?url'
 
 export interface RouterContext {
@@ -20,7 +24,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
     links: [{ rel: 'stylesheet', href: appCss }],
   }),
+  // Runs on the server for the first request, so the header and the route
+  // guards below know who is signed in before any HTML is sent.
+  beforeLoad: async ({ context }) => {
+    const session = await context.queryClient.ensureQueryData(sessionQuery)
+    return { session }
+  },
   shellComponent: RootDocument,
+  component: RootLayout,
+  errorComponent: RootError,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -30,10 +42,35 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {/* The site header belongs here. See TASK.md. */}
         {children}
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function RootLayout() {
+  return (
+    <>
+      <Header />
+      <Outlet />
+    </>
+  )
+}
+
+/**
+ * Loading the session failed for a reason other than being signed out, for
+ * example Appwrite being unreachable. The cookie is kept; retrying is the fix.
+ */
+function RootError() {
+  const router = useRouter()
+  return (
+    <main>
+      <h1>Something went wrong</h1>
+      <p>We could not reach our servers. Your sign-in is kept.</p>
+      <button type="button" onClick={() => router.invalidate()}>
+        Try again
+      </button>
+    </main>
   )
 }
